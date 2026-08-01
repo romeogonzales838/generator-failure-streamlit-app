@@ -1,0 +1,26 @@
+# docker-compose.yml
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    environment:
+      MODEL_PATH: /app/models/generator_failure_model_bundle.pkl
+      MAX_UPLOAD_MB: 50
+      FRONTEND_ORIGINS: http://localhost:8501
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    environment:
+      API_URL: http://backend:8000
+      REQUEST_TIMEOUT_SECONDS: 180
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+    restart: unless-stopped
